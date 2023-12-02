@@ -9,7 +9,7 @@ import (
 func main() {
 	fmt.Println("Hello")
 	aid := adapter.GetDefaultAdapterID()
-	devices, err := Run(aid)
+	devices, err := Run(aid, 60)
 
 	if err != nil {
 		fmt.Println(err)

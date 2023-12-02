@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/muka/go-bluetooth/api"
@@ -12,15 +11,15 @@ import (
 
 var devices []device.Device1
 
-func Run(adapterID string) ([]device.Device1, error) {
-	fmt.Println("Scanning started")
+func Run(adapterID string, timer int) ([]device.Device1, error) {
+	log.Infof("Scanning started")
 
 	//clean up connection on exit
 	defer api.Exit()
 
 	a, err := adapter.GetAdapter(adapterID)
 
-	// powercycle
+	log.Infof("Running BT power cycle")
 	a.SetPowered(false)
 	a.SetPowered(true)
 
@@ -28,22 +27,21 @@ func Run(adapterID string) ([]device.Device1, error) {
 		return nil, err
 	}
 
-	fmt.Println("Flush cached devices")
+	log.Infof("Flush cached devices")
 	err = a.FlushDevices()
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println("Start discovery")
 	discovery, cancel, err := api.Discover(a, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	go func() {
-		fmt.Println("Starting timer")
-		time.Sleep(5 * time.Second)
-		fmt.Println("Timer expired")
+		log.Infof("Starting timer %d seconds", timer)
+		time.Sleep(time.Duration(timer) * time.Second)
+		log.Infof("Timer expired")
 		cancel()
 	}()
 
@@ -64,11 +62,10 @@ func Run(adapterID string) ([]device.Device1, error) {
 		}
 
 		devices = append(devices, *dev)
-		log.Infof("name=%s addr=%s rssi=%d", dev.Properties.Name, dev.Properties.Address, dev.Properties.RSSI)
-		fmt.Println("New")
+		log.Infof("New device discovered: name=%s addr=%s rssi=%d", dev.Properties.Name, dev.Properties.Address, dev.Properties.RSSI)
 	}
 
-	fmt.Println("FInish search loop")
+	log.Infof("Scanning complete")
 
 	return devices, nil
 }

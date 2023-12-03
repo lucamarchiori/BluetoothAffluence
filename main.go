@@ -7,18 +7,16 @@ import (
 )
 
 func main() {
-	fmt.Println("Hello")
 	aid := adapter.GetDefaultAdapterID()
-	devices, err := Run(aid, 60)
+	scan, err := Run(aid, 60)
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	for i := range devices {
-		d := devices[i]
-		fmt.Println(d.Properties.Name, d.Properties.Address, d.Properties.RSSI)
+	for i := range scan.Devices {
+		d := scan.Devices[i]
+		fmt.Println(d.Address, d.RSSI, d.Name)
 	}
-	return
 
 }

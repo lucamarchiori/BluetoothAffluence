@@ -17,3 +17,14 @@ From the Bettercap repository:
 Bettercap is a powerful, easily extensible and portable framework written in Go which aims to offer to security researchers, red teamers and reverse engineers an easy to use, all-in-one solution with all the features they might possibly need for performing reconnaissance and attacking WiFi networks, Bluetooth Low Energy devices, wireless HID devices and Ethernet networks.
 
 Since this is a very used tool and since i am looking for some language that can interact with bluetooth, my choice is to use the Go programming language and the [TinyGo Bluetooth library](https://github.com/tinygo-org/bluetooth#go-bluetooth) that is a cross-platform package for using hardware from the Go programming language.
+
+
+## Roadmap
+- Client: Send Json Request with data
+- Client: chronjob and auotomation
+- Client: tests
+- Server: Webserver
+- Server: Routes
+- Server: Database
+- Server: Data POST
+- Server: FrontEnd

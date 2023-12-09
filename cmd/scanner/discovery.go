@@ -6,7 +6,6 @@ import (
 	"github.com/muka/go-bluetooth/api"
 	"github.com/muka/go-bluetooth/bluez/profile/adapter"
 	"github.com/muka/go-bluetooth/bluez/profile/device"
-	log "github.com/sirupsen/logrus"
 )
 
 type Device struct {

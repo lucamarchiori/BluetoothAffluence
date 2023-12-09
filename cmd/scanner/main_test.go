@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"testing"
 )
 
@@ -13,6 +12,6 @@ func TestPostScanResults(t *testing.T) {
 
 	b := postScanResults(s)
 	if !b {
-		log.Println("Error")
+		log.Info("Error")
 	}
 }

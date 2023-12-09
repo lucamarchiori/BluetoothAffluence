@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"reflect"
 	"testing"
 )
@@ -19,6 +18,6 @@ func TestAddDevice(t *testing.T) {
 	wanted = []Device{{Address: "aa"}, {Address: "bb"}, {Address: "cc"}}
 
 	if !reflect.DeepEqual(gotten, wanted) {
-		log.Printf("Error: wanted {%v}, gotten {%v}", wanted, gotten)
+		log.Info("Error: wanted {%v}, gotten {%v}", wanted, gotten)
 	}
 }

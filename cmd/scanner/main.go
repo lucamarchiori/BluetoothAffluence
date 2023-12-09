@@ -3,26 +3,33 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 	"os"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/muka/go-bluetooth/bluez/profile/adapter"
 )
 
+var log = logrus.New()
+
 func main() {
+	log.Out = os.Stdout
+
+	log.Infof("Bluetooth affluence script started")
+
 	aid := adapter.GetDefaultAdapterID()
 	scan, err := Run(aid, 20)
 
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		os.Exit(1)
 	}
 
 	res := postScanResults(scan)
 	if !res {
-		log.Println("Error sending data to server")
+		log.Error("Error sending data to server")
+		os.Exit(1)
 	}
 
 	os.Exit(0)
@@ -36,7 +43,7 @@ func postScanResults(scan Scan) bool {
 	d, err = json.Marshal(scan)
 
 	if err != nil {
-		log.Println(err)
+		log.Error(err)
 		return false
 	}
 
@@ -45,7 +52,7 @@ func postScanResults(scan Scan) bool {
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(bd))
 
 	if err != nil {
-		log.Println(err)
+		log.Error(err)
 		return false
 	}
 
@@ -55,7 +62,7 @@ func postScanResults(scan Scan) bool {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		log.Println(err)
+		log.Error(err)
 		return false
 	}
 	defer resp.Body.Close()

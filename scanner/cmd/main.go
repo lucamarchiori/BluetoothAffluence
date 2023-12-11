@@ -7,8 +7,6 @@ import (
 	"os"
 
 	"github.com/sirupsen/logrus"
-
-	"github.com/muka/go-bluetooth/bluez/profile/adapter"
 )
 
 var log = logrus.New()
@@ -27,8 +25,9 @@ func init() {
 func main() {
 	log.Infof("Bluetooth affluence script started")
 
-	aid := adapter.GetDefaultAdapterID()
-	scan, err := Run(aid, 20)
+	//aid := adapter.GetDefaultAdapterID()
+	//scan, err := Run(aid, 20)
+	scan, err := RunMock()
 
 	if err != nil {
 		log.Error(err)
@@ -45,7 +44,7 @@ func main() {
 }
 
 func postScanResults(scan Scan) bool {
-	var url string = "https://webhook.site/0435b241-6cd6-4707-a286-35da5feda75a"
+	var url string = "http://127.0.0.1:4000/store"
 	var d []byte
 	var err error
 

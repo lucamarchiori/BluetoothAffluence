@@ -65,9 +65,10 @@ func postScanResults(scan Scan) bool {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-
 	client := &http.Client{}
 	resp, err := client.Do(req)
+
+	log.Info(resp.Body)
 
 	if err != nil {
 		log.Error(err)

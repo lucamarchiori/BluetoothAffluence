@@ -12,7 +12,7 @@ type Device struct {
 	/*
 		Address The Bluetooth device address of the remote device.
 	*/
-	Address string
+	Address string `json:"address"`
 
 	/*
 		Alias The name alias for the remote device. The alias can
@@ -26,7 +26,7 @@ type Device struct {
 				When resetting the alias with an empty string, the
 				property will default back to the remote name.
 	*/
-	Alias string
+	Alias string `json:"alias"`
 
 	/*
 		Name The Bluetooth remote name. This value can not be
@@ -39,29 +39,29 @@ type Device struct {
 				If the Alias property is unset, it will reflect
 				this value which makes it more convenient.
 	*/
-	Name string
+	Name string `json:"name"`
 	/*
 		TxPower Advertised transmitted power level (inquiry or
 				advertising).
 	*/
-	TxPower int16
+	TxPower int16 `json:"txPower"`
 
 	/*
 		RSSI Received Signal Strength Indicator of the remote
 				device (inquiry or advertising).
 	*/
-	RSSI int16
+	RSSI int16 `json:"rssi"`
 }
 
 type Scanner struct {
-	Address string
-	Name    string
-	Alias   string
+	Address string `json:"address"`
+	Name    string `json:"name"`
+	Alias   string `json:"alias"`
 }
 
 type Scan struct {
-	Devices []Device
-	Scanner Scanner
+	Devices []Device `json:"devices"`
+	Scanner Scanner  `json:"scanner"`
 }
 
 func ScannerProps(a adapter.Adapter1) Scanner {

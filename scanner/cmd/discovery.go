@@ -156,7 +156,7 @@ func Run(adapterID string, timer int) (Scan, error) {
 func RunMock() (Scan, error) {
 	var devices []Device
 	scanner := Scanner{Address: "AA:AA:AA:AA:AA:AA", Name: "Mock scanner", Alias: "Mock scanner"}
-	device := Device{Address: "99:99:99:99:99:99", Alias: "Mock device", Name: "Mock device", TxPower: 99, RSSI: 99}
+	device := Device{Address: "99:99:99:99:99:99", Name: "Mock device", TxPower: 99, RSSI: 99}
 	addDevice(&devices, device)
 	scan := Scan{Devices: devices, Scanner: scanner}
 	return scan, nil

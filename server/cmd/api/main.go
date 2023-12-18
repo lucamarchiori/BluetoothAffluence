@@ -1,16 +1,20 @@
 package main
 
 import (
+	"database/sql"
 	"net/http"
 	"os"
 	"time"
 
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/sirupsen/logrus"
+	"lucamarchiori.bluetoothAffluence/server/internal/data"
 )
 
 type application struct {
 	config config
 	logger logrus.Logger
+	models data.Models
 }
 
 type config struct {
@@ -33,11 +37,26 @@ var log = logrus.New()
 
 func main() {
 	var cfg config
+	var err error
+	var statement *sql.Stmt
+
 	cfg.port = 4000
+	db, err := sql.Open("sqlite3", "../../database/ServerDB.db")
+
+	if err != nil {
+		log.Error(err)
+		panic(1)
+	}
+
+	statement, err = db.Prepare("CREATE TABLE IF NOT EXISTS devices (id INTEGER PRIMARY KEY, address TEXT, alias TEXT, name TEXT, txPower REAL, rssi REAL)")
+	statement.Exec()
+	statement, err = db.Prepare("CREATE TABLE IF NOT EXISTS scanners (id INTEGER PRIMARY KEY, address TEXT, alias TEXT, name TEXT)")
+	statement.Exec()
 
 	app := &application{
 		logger: *logrus.StandardLogger(),
 		config: cfg,
+		models: data.NewModels(db),
 	}
 
 	srv := &http.Server{
@@ -48,7 +67,7 @@ func main() {
 	}
 
 	app.logger.Infof("starting %s server on %s", cfg.env, srv.Addr)
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	app.logger.Error(err)
 
 }

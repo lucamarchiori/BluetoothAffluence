@@ -5,8 +5,6 @@ import (
 	"fmt"
 )
 
-var err error
-
 type DeviceModel struct {
 	DB *sql.DB
 }
@@ -17,13 +15,14 @@ type Device struct {
 	Name    string `json:"name"`
 	TxPower int16  `json:"txPower"`
 	RSSI    int16  `json:"rssi"`
+	ScanId  int16
 }
 
 func (d DeviceModel) Insert(device *Device) (sql.Result, error) {
 
-	query := "INSERT INTO devices (address, alias, name, txPower, rssi) values (?, ?, ?, ?, ?);"
+	query := "INSERT INTO devices (address, alias, name, txPower, rssi, scanId) values (?, ?, ?, ?, ?, ?);"
 
-	args := []interface{}{device.Address, device.Alias, device.Name, device.TxPower, device.RSSI}
+	args := []interface{}{device.Address, device.Alias, device.Name, device.TxPower, device.RSSI, device.ScanId}
 	stm, err := d.DB.Prepare(query)
 
 	if err != nil {

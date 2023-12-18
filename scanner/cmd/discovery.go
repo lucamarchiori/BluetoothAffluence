@@ -60,8 +60,9 @@ type Scanner struct {
 }
 
 type Scan struct {
-	Devices []Device `json:"devices"`
-	Scanner Scanner  `json:"scanner"`
+	Devices  []Device `json:"devices"`
+	Scanner  Scanner  `json:"scanner"`
+	ScanTime string   `json:"scanTime"`
 }
 
 func ScannerProps(a adapter.Adapter1) Scanner {
@@ -148,7 +149,8 @@ func Run(adapterID string, timer int) (Scan, error) {
 		addDevice(&devices, device)
 	}
 
-	scan := Scan{Devices: devices, Scanner: s}
+	dt := time.Now().Format(time.RFC3339)
+	scan := Scan{Devices: devices, Scanner: s, ScanTime: dt}
 
 	return scan, nil
 }
@@ -158,6 +160,8 @@ func RunMock() (Scan, error) {
 	scanner := Scanner{Address: "AA:AA:AA:AA:AA:AA", Name: "Mock scanner", Alias: "Mock scanner"}
 	device := Device{Address: "99:99:99:99:99:99", Name: "Mock device", TxPower: 99, RSSI: 99}
 	addDevice(&devices, device)
-	scan := Scan{Devices: devices, Scanner: scanner}
+
+	dt := time.Now().Format(time.RFC3339)
+	scan := Scan{Devices: devices, Scanner: scanner, ScanTime: dt}
 	return scan, nil
 }

@@ -21,6 +21,7 @@ func (app *application) store(w http.ResponseWriter, r *http.Request) {
 			Name    string `json:"name"`
 			Alias   string `json:"alias"`
 		}
+		ScanTime string `json:"scanTime"`
 	}
 
 	err := app.readJSON(w, r, &input)
@@ -32,6 +33,19 @@ func (app *application) store(w http.ResponseWriter, r *http.Request) {
 	// Dump the contents of the input struct in a HTTP response.
 	app.logger.Info(input)
 
+	// Handle SCAN info
+	s := &data.Scan{
+		ScanTime: input.ScanTime,
+	}
+
+	res, err := app.models.Scan.Insert(s)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	scan_id, _ := res.LastInsertId()
+
 	// Store the request content into the database
 	for _, device := range input.Devices {
 		d := &data.Device{
@@ -40,6 +54,7 @@ func (app *application) store(w http.ResponseWriter, r *http.Request) {
 			RSSI:    device.RSSI,
 			TxPower: device.TxPower,
 			Address: device.Address,
+			ScanId:  int16(scan_id),
 		}
 
 		_, err := app.models.Device.Insert(d)

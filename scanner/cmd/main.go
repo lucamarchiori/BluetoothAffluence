@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/muka/go-bluetooth/bluez/profile/adapter"
 	"github.com/sirupsen/logrus"
 )
 
@@ -26,9 +27,9 @@ func init() {
 func main() {
 	log.Infof("Bluetooth affluence script started")
 
-	//aid := adapter.GetDefaultAdapterID()
-	//scan, err := Run(aid, 20)
-	scan, err := RunMock()
+	aid := adapter.GetDefaultAdapterID()
+	scan, err := Run(aid, 60)
+	//scan, err := RunMock()
 
 	if err != nil {
 		log.Error(err)

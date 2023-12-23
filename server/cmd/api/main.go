@@ -48,7 +48,7 @@ func main() {
 		panic(1)
 	}
 
-	statement, err = db.Prepare("CREATE TABLE IF NOT EXISTS devices (id INTEGER PRIMARY KEY, address TEXT, alias TEXT, name TEXT, txPower REAL, rssi REAL, scanID, INTEGER)")
+	statement, err = db.Prepare("CREATE TABLE IF NOT EXISTS devices (id INTEGER PRIMARY KEY, address TEXT, alias TEXT, name TEXT, txPower REAL, rssi REAL, scanID INTEGER)")
 	statement.Exec()
 	statement, err = db.Prepare("CREATE TABLE IF NOT EXISTS scanners (id INTEGER PRIMARY KEY, address TEXT, alias TEXT, name TEXT, UNIQUE(address))")
 	statement.Exec()

@@ -160,6 +160,8 @@ func RunMock() (Scan, error) {
 	scanner := Scanner{Address: "AA:AA:AA:AA:AA:AA", Name: "Mock scanner", Alias: "Mock scanner"}
 	device := Device{Address: "99:99:99:99:99:99", Name: "Mock device", TxPower: 99, RSSI: 99}
 	addDevice(&devices, device)
+	device = Device{Address: "88:99:99:99:99:99", Name: "Mock device 2", TxPower: 99, RSSI: 99}
+	addDevice(&devices, device)
 
 	dt := time.Now().Format(time.RFC3339)
 	scan := Scan{Devices: devices, Scanner: scanner, ScanTime: dt}

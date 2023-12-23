@@ -28,17 +28,45 @@ func (app *application) store(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		app.logger.Error(err)
 		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
-		return
 	}
-	// Dump the contents of the input struct in a HTTP response.
+
+	// Dump the contents of the input struct
 	app.logger.Info(input)
+
+	// Store SCANNER info
+	sc := &data.Scanner{
+		Address: input.Scanner.Address,
+		Name:    input.Scanner.Name,
+		Alias:   input.Scanner.Alias,
+	}
+
+	res, err := app.models.Scanner.Insert(sc)
+	if err != nil {
+		app.logger.Error(err)
+		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
+	}
+
+	// Get the scanner DB Obj
+	sc, err = app.models.Scanner.GetByAddress(sc.Address)
+
+	if err != nil {
+		app.logger.Error(err)
+		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
+	}
+
+	if sc == nil {
+		app.logger.Error("Scanner not found")
+		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
+	}
 
 	// Handle SCAN info
 	s := &data.Scan{
-		ScanTime: input.ScanTime,
+		ScanTime:  input.ScanTime,
+		ScannerId: (*sc).Id,
 	}
 
-	res, err := app.models.Scan.Insert(s)
+	res, err = app.models.Scan.Insert(s)
+
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return

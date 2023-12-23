@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"os"
 
@@ -34,8 +35,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	res := postScanResults(scan)
-	if !res {
+	err = postScanResults(scan)
+	if err != nil {
 		log.Error("Error sending data to server")
 		os.Exit(1)
 	}
@@ -43,7 +44,7 @@ func main() {
 	os.Exit(0)
 }
 
-func postScanResults(scan Scan) bool {
+func postScanResults(scan Scan) error {
 	var url string = "http://127.0.0.1:4000/store"
 	var d []byte
 	var err error
@@ -51,8 +52,7 @@ func postScanResults(scan Scan) bool {
 	d, err = json.Marshal(scan)
 
 	if err != nil {
-		log.Error(err)
-		return false
+		return err
 	}
 
 	bd := []byte(d)
@@ -60,21 +60,22 @@ func postScanResults(scan Scan) bool {
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(bd))
 
 	if err != nil {
-		log.Error(err)
-		return false
+		return err
+	}
+
+	if req == nil {
+		return errors.New("Invalid request")
 	}
 
 	req.Header.Set("Content-Type", "application/json")
 	client := &http.Client{}
 	resp, err := client.Do(req)
 
-	log.Info(resp.Body)
-
 	if err != nil {
-		log.Error(err)
-		return false
+		return err
 	}
-	defer resp.Body.Close()
 
-	return true
+	resp.Body.Close()
+
+	return nil
 }

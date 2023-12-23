@@ -10,14 +10,15 @@ type ScanModel struct {
 }
 
 type Scan struct {
-	ScanTime string `json:"scanTime"`
+	ScanTime  string `json:"scanTime"`
+	ScannerId int    `json:"scannerId"`
 }
 
 func (s ScanModel) Insert(scan *Scan) (sql.Result, error) {
 
-	query := "INSERT INTO scan (scanTime) values (?);"
+	query := "INSERT INTO scan (scanTime, scannerId) values (?, ?);"
 
-	args := []interface{}{scan.ScanTime}
+	args := []interface{}{scan.ScanTime, scan.ScannerId}
 	stm, err := s.DB.Prepare(query)
 
 	if err != nil {

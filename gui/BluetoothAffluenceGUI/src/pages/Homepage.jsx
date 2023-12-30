@@ -7,7 +7,6 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 import Page from "@/components/tabler/Page";
 
 const Homepage = () => {
-  const blur = "blur(20px)";
   return (
     <Page title="Rust2dakar">
       <main className="overflow-x-hidden">
@@ -19,7 +18,6 @@ const Homepage = () => {
       <Line />
 
         </div>
-         
       </main>
     </Page>
   );

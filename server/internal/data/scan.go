@@ -2,7 +2,6 @@ package data
 
 import (
 	"database/sql"
-	"fmt"
 )
 
 type ScanModel struct {
@@ -14,6 +13,11 @@ type Scan struct {
 	ScannerId int    `json:"scannerId"`
 }
 
+type scanDeviceCount struct {
+	ScanTime string `json:"scanTime"`
+	Count    int    `json:"count"`
+}
+
 func (s ScanModel) Insert(scan *Scan) (sql.Result, error) {
 
 	query := "INSERT INTO scan (scanTime, scannerId) values (?, ?);"
@@ -22,17 +26,55 @@ func (s ScanModel) Insert(scan *Scan) (sql.Result, error) {
 	stm, err := s.DB.Prepare(query)
 
 	if err != nil {
-		fmt.Println("UNO", err)
 		return nil, err
 	}
 
 	rst, err := stm.Exec(args...)
 
 	if err != nil {
-		fmt.Println("DUE", err)
 		return nil, err
 	}
 
 	return rst, nil
+}
 
+func (s ScanModel) CountScanDevices(scannerId int) (*[]scanDeviceCount, error) {
+
+	// TODO: Filter by scanner ID and date range
+	query := `SELECT scan.scanTime, COUNT(devices.id) AS numDevices FROM scan
+	LEFT JOIN devices ON scan.id = devices.scanID
+	WHERE scan.scannerID = ?
+	GROUP BY scan.scanTime;`
+
+	rows, err := s.DB.Query(query, scannerId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+	var results []scanDeviceCount
+
+	// Iterate through the result set
+	for rows.Next() {
+		var scanTime string
+		var numDevices int
+
+		// Scan values from the result set into variables
+		err := rows.Scan(&scanTime, &numDevices)
+		if err != nil {
+			return nil, err
+		}
+
+		res := scanDeviceCount{scanTime, numDevices}
+		results = append(results, res)
+
+	}
+
+	// Check for errors from iterating over rows
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return &results, nil
 }

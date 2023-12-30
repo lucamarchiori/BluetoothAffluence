@@ -93,3 +93,32 @@ func (app *application) store(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+func (app *application) countScanDevices(w http.ResponseWriter, r *http.Request) {
+
+	res, err := app.models.Scan.CountScanDevices(1)
+
+	if err != nil {
+		app.logger.Error(err)
+		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"device_count": res}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+
+func (app *application) indexScanner(w http.ResponseWriter, r *http.Request) {
+	res, err := app.models.Scanner.Index()
+
+	if err != nil {
+		app.logger.Error(err)
+		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"scanners": res}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}

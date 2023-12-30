@@ -16,6 +16,7 @@ type Scanner struct {
 	Name    string `json:"name"`
 }
 
+// Insert a scanner in the database
 func (s ScannerModel) Insert(scanner *Scanner) (sql.Result, error) {
 
 	query := "INSERT OR IGNORE INTO scanners (address, alias, name) values (?, ?, ?);"
@@ -38,6 +39,35 @@ func (s ScannerModel) Insert(scanner *Scanner) (sql.Result, error) {
 	return rst, nil
 }
 
+// Get all scanners
+func (s ScannerModel) Index() (*[]Scanner, error) {
+	query := "SELECT * FROM SCANNERS"
+	rsp, err := s.DB.Query(query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rsp.Close()
+	var scanners []Scanner
+
+	for rsp.Next() {
+		var scanner Scanner
+		err := rsp.Scan(&scanner.Id, &scanner.Address, &scanner.Alias, &scanner.Name)
+		if err != nil {
+			return nil, err
+		}
+		scanners = append(scanners, scanner)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &scanners, nil
+}
+
+// Get a scanner by its address
 func (s ScannerModel) GetByAddress(address string) (*Scanner, error) {
 
 	var rows []Scanner

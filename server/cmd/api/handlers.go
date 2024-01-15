@@ -95,6 +95,7 @@ func (app *application) store(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) countScanDevices(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	res, err := app.models.Scan.CountScanDevices(1)
 
@@ -110,12 +111,17 @@ func (app *application) countScanDevices(w http.ResponseWriter, r *http.Request)
 }
 
 func (app *application) indexScanner(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	res, err := app.models.Scanner.Index()
 
 	if err != nil {
 		app.logger.Error(err)
 		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
 	}
+
+	// TODO: Create response struct
 
 	err = app.writeJSON(w, http.StatusOK, envelope{"scanners": res}, nil)
 	if err != nil {

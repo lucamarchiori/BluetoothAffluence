@@ -8,9 +8,13 @@ import (
 	"net/http"
 )
 
-type envelope map[string]interface{}
+type customResp struct {
+	Data    map[string]interface{} `json:"data,omitempty"`
+	Status  int                    `json:"status"`
+	Message interface{}            `json:"message"`
+}
 
-func (app *application) writeJSON(w http.ResponseWriter, status int, data envelope, headers http.Header) error {
+func (app *application) writeJSON(w http.ResponseWriter, status int, data customResp, headers http.Header) error {
 	js, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
 		return err

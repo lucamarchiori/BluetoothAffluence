@@ -13,7 +13,7 @@ const Homepage = () => {
 
         <div className="container-xl text-center pt-5">
           <p className="fs-1 fw-light lh-lg pt-5 pb-5">
-          Lorem ipsum
+          Occupancy rate bluethooth scanner
           </p>
           <ScannerIndex></ScannerIndex>
 

@@ -104,7 +104,9 @@ func (app *application) countScanDevices(w http.ResponseWriter, r *http.Request)
 		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
 	}
 
-	err = app.writeJSON(w, http.StatusOK, envelope{"device_count": res}, nil)
+	rp := customResp{Message: "Scanners retrived", Data: map[string]interface{}{"count": res}, Status: 200}
+
+	err = app.writeJSON(w, http.StatusOK, rp, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
@@ -121,9 +123,18 @@ func (app *application) indexScanner(w http.ResponseWriter, r *http.Request) {
 		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
 	}
 
-	// TODO: Create response struct
+	*res = append(*res, data.Scanner{Id: 0, Address: "00:00:00:00:00:00", Name: "All", Alias: "All"})
+	*res = append(*res, data.Scanner{Id: 0, Address: "00:00:00:00:00:00", Name: "All", Alias: "All"})
+	*res = append(*res, data.Scanner{Id: 0, Address: "00:00:00:00:00:00", Name: "All", Alias: "All"})
+	*res = append(*res, data.Scanner{Id: 0, Address: "00:00:00:00:00:00", Name: "All", Alias: "All"})
+	*res = append(*res, data.Scanner{Id: 0, Address: "00:00:00:00:00:00", Name: "All", Alias: "All"})
+	*res = append(*res, data.Scanner{Id: 0, Address: "00:00:00:00:00:00", Name: "All", Alias: "All"})
+	*res = append(*res, data.Scanner{Id: 0, Address: "00:00:00:00:00:00", Name: "All", Alias: "All"})
+	*res = append(*res, data.Scanner{Id: 0, Address: "00:00:00:00:00:00", Name: "All", Alias: "All"})
 
-	err = app.writeJSON(w, http.StatusOK, envelope{"scanners": res}, nil)
+	rp := customResp{Message: "Scanners retrived", Data: map[string]interface{}{"scanners": res}, Status: 200}
+
+	err = app.writeJSON(w, http.StatusOK, rp, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}

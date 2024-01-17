@@ -5,10 +5,12 @@ import { toast } from "react-toastify";
 
 const ScannerCard = ({ scanner, onClick, key }) => {
   return (
-    <div className="col-6 col-md-4 col-lg-3 col-xl-2 mb-4">
-      <div className="card card-sm card-body text-center" onClick={() => onClick(scanner)}>
-        <div className="text-muted mb-2">{scanner.alias}</div>
-        <div className="h2 mb-0">{scanner.count}</div>
+    <div className="col-6 col-md-4 col-lg-4 col-xl-4 mb-4">
+      <div className="card card-sm card-body text-center d-flex justify-content-center align-items-center"  onClick={() => onClick(scanner)}>
+        <div className="text-muted mb-2"><b>Alias/Name: </b>{scanner.alias ? scanner.alias : (scanner.name ? scanner.name : "-")}</div>
+        <div className="text-muted mb-2"><b>Address: </b>{scanner.address}</div>
+        <hr className="w-100 mb-3 mt-1" />
+        <a className="btn btn-primary btn-sm px-4" style={{width: 120}} href="#">View</a>
       </div>
     </div>
   );
@@ -17,7 +19,7 @@ const ScannerCard = ({ scanner, onClick, key }) => {
 const ScannerList = ({scanners}) =>{
   // Create a card foreach scanner
   return (
-    <div>
+    <div className="row">
       {scanners.map((scanner, index) => (
         <ScannerCard key={index} scanner={scanner} />
       ))}
@@ -44,13 +46,7 @@ const ScannerIndex = () => {
       setLoading(true);
       try {
         const [lastResponse] = await Promise.all([fetchApi()]);
-
-        handleFetchResponse(lastResponse, ["scanners"], () => {
-          const { scanners } = lastResponse.scanners;
-          setScanners(scanners)
-         
-        });
-
+        setScanners(lastResponse.data.data.scanners);
       } catch (error) {
         if (!controller.signal.aborted) {
           console.log("Error");
@@ -70,7 +66,6 @@ const ScannerIndex = () => {
   }, [apiClient, handleFetchResponse]);
 
 
-  console.log(scanners)
   return loading ? "loading ..." : <ScannerList scanners={scanners}/>
 };
 

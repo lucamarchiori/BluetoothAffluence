@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import apiClient from "@/services/api";
 import useApiResponse from "@/hooks/useApiResponse";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const ScannerCard = ({ scanner, onClick, key }) => {
   return (
@@ -10,7 +11,7 @@ const ScannerCard = ({ scanner, onClick, key }) => {
         <div className="text-muted mb-2"><b>Alias/Name: </b>{scanner.alias ? scanner.alias : (scanner.name ? scanner.name : "-")}</div>
         <div className="text-muted mb-2"><b>Address: </b>{scanner.address}</div>
         <hr className="w-100 mb-3 mt-1" />
-        <a className="btn btn-primary btn-sm px-4" style={{width: 120}} href="#">View</a>
+        <Link className="btn btn-primary btn-sm px-4" to={`/scanner/show/${scanner.id}`} title="View">View</Link>
       </div>
     </div>
   );

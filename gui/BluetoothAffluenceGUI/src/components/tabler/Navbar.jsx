@@ -11,7 +11,7 @@ const Navbar = () => {
               <img
                 width="110"
                 height="32"
-                alt="Bluetooth affluence"
+                alt="Bluetooth scanner"
                 className="navbar-brand-image py-1"
               />
             </Link>

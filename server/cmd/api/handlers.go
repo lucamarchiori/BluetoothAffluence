@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"strconv"
 
 	"lucamarchiori.bluetoothAffluence/server/internal/data"
 )
@@ -101,18 +100,22 @@ func (app *application) countScanDevices(w http.ResponseWriter, r *http.Request)
 	startDate := r.URL.Query().Get("start_date")
 	endDate := r.URL.Query().Get("end_date")
 
+	startDate = "2023-12-01 00:00:00" //TODO: REMOVE THIS
+	endDate = "2023-12-31 23:59:59"
+
 	if startDate == "" || endDate == "" {
 		app.errorResponse(w, r, http.StatusBadRequest, "Invalid date range")
 		return
 	}
 
 	// Get the scanner id from the request
-	scannerId, err := strconv.Atoi(r.URL.Query().Get("scanner_id"))
+	//scannerId, err := strconv.Atoi(r.URL.Query().Get("scanner_id")) //TODO:
+	// if err != nil {
+	// 	app.logger.Error(err)
+	// 	app.errorResponse(w, r, http.StatusBadRequest, err.Error())
+	// }
 
-	if err != nil {
-		app.logger.Error(err)
-		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
-	}
+	scannerId := 1
 
 	if scannerId == 0 {
 		app.errorResponse(w, r, http.StatusBadRequest, "Invalid scanner id")

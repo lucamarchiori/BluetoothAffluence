@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import React from "react";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
 import { Line } from "react-chartjs-2";
+import PlotDevices from "../charts/PlotDevices";
+import 'chartjs-adapter-moment';
 
 export const options = {
   responsive: true,
@@ -91,7 +93,7 @@ const Show = ({ scannerId }) => {
   const chartCanvasRef = useRef(null);
   const chartInstanceRef = useRef(null);
   console.log(data)
-  return loading ? "loading ..." : <canvas ref={chartCanvasRef} />;
+  return loading ? "loading ..." : <PlotDevices /> ;
 };
 
 export default Show;

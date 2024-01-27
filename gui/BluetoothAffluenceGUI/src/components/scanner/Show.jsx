@@ -40,35 +40,6 @@ const Show = ({ scannerId }) => {
       try {
         const [lastResponse] = await Promise.all([fetchApi()]);
         setData(lastResponse.data.data.count);
-
-        // Cleanup previous chart instance
-        if (chartInstanceRef.current) {
-          chartInstanceRef.current.destroy();
-        }
-
-        if (chartCanvasRef.current) {
-
-          const scanTimes = data.map(entry => entry.scanTime);
-          const counts = data.map(entry => entry.count);
-
-          console.log(scanTimes)
-
-          chartInstanceRef.current = new ChartJS(chartCanvasRef.current, {
-            type: "line",
-            labels: scanTimes,
-            data: {
-              datasets: [
-                {
-                  label: "Dataset 1",
-                  data: counts,
-                  borderColor: "rgb(255, 99, 132)",
-                  backgroundColor: "rgba(255, 99, 132, 0.5)",
-                },
-              ],
-            },
-            options: options,
-          });
-        }
       } catch (error) {
         if (!controller.signal.aborted) {
           console.log("Error");
@@ -93,7 +64,7 @@ const Show = ({ scannerId }) => {
   const chartCanvasRef = useRef(null);
   const chartInstanceRef = useRef(null);
   console.log(data)
-  return loading ? "loading ..." : <PlotDevices /> ;
+  return loading ? "loading ..." : <PlotDevices chartData={data} /> ;
 };
 
 export default Show;

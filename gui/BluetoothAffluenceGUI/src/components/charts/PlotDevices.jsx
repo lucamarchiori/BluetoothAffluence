@@ -1,79 +1,53 @@
 import React from "react";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  TimeScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { Line } from 'react-chartjs-2';
+import { Line } from "react-chartjs-2";
+import { Chart as ChartJS, LinearScale, TimeScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
+import ZoomPlugin from 'chartjs-plugin-zoom';
 
-const PlotDevices = (props) => {
-  var dataExample = [
-    { scan_time: "2021-08-01 00:00:00", numDevices: 10 },
-    { scan_time: "2021-08-01 00:01:00", numDevices: 11 },
-    { scan_time: "2021-08-01 00:02:00", numDevices: 12 },
-    { scan_time: "2021-08-01 00:03:00", numDevices: 13 },
-    { scan_time: "2021-08-01 00:04:00", numDevices: 14 },
-    { scan_time: "2021-08-01 00:05:00", numDevices: 15 },
-    { scan_time: "2021-08-01 00:06:00", numDevices: 16 },
-    { scan_time: "2021-08-01 00:07:00", numDevices: 17 },
-    { scan_time: "2021-08-01 00:08:00", numDevices: 18 },
-    { scan_time: "2021-08-01 00:09:00", numDevices: 19 },
-    { scan_time: "2021-08-01 00:10:00", numDevices: 16 },
-    { scan_time: "2021-08-01 00:11:00", numDevices: 17 },
-    { scan_time: "2021-08-01 00:12:00", numDevices: 13 },
-    { scan_time: "2021-08-01 00:13:00", numDevices: 14 },
-    { scan_time: "2021-08-01 00:14:00", numDevices: 8 },
-    { scan_time: "2021-08-01 00:15:00", numDevices: 9 },
-  ];
+const PlotDevices = ({ chartData = [] }) => {
+  const scanTimes = chartData.map((entry) => entry.scanTime);
+  const counts = chartData.map((entry) => entry.count);
 
-  const scanTimes = dataExample.map((entry) => entry.scan_time);
-  const counts = dataExample.map((entry) => entry.numDevices);
-
-  console.log(scanTimes, counts)
-
-  ChartJS.register(
-    LinearScale,
-    TimeScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend
-  );
+  ChartJS.register(LinearScale, TimeScale, PointElement, LineElement, Title, Tooltip, Legend, ZoomPlugin);
 
   const options = {
+    bezierCurve: true,
     scales: {
       x: {
-        type: 'time',
+        type: "time",
         time: {
-          unit: 'minute',
+          unit: "minute",
         },
         title: {
           display: true,
-          text: 'Scan Time',
+          text: "Scan Time",
         },
       },
       y: {
         title: {
           display: true,
-          text: 'Device Count',
+          text: "Device Count",
         },
       },
     },
     responsive: true,
     plugins: {
       legend: {
-        position: 'top',
+        position: "top",
       },
       title: {
         display: true,
-        text: 'Occupancy rate chart'
+        text: "Occupancy rate chart",
+      },
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: "x",
+        },
+        zoom: {
+          enabled: true,
+          drag: true,
+          mode: "xy",
+        },
       },
     },
   };
@@ -82,14 +56,14 @@ const PlotDevices = (props) => {
     labels: scanTimes,
     datasets: [
       {
-        label: 'Device count',
+        label: "Device count",
         data: counts,
-        borderColor: 'rgb(255, 99, 132)',
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        borderColor: "rgb(255, 99, 132)",
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        tension: 0.25,
       },
     ],
   };
-  
 
   return (
     <>

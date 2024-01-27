@@ -68,7 +68,6 @@ func (s ScanModel) CountScanDevices(scannerId int, startDate string, endDate str
 
 		res := scanDeviceCount{scanTime, numDevices}
 		results = append(results, res)
-
 	}
 
 	// Check for errors from iterating over rows
@@ -77,4 +76,54 @@ func (s ScanModel) CountScanDevices(scannerId int, startDate string, endDate str
 	}
 
 	return &results, nil
+}
+
+
+func (s ScanModel) CountScanDevicesMovingAVG(scannerId int, startDate string, endDate string) (*[]scanDeviceCount, error) {
+    query := `SELECT scan.scanTime, COUNT(devices.id) AS numDevices FROM scan
+              LEFT JOIN devices ON scan.id = devices.scanID
+              WHERE scan.scannerID = ?
+              AND scan.scanTime BETWEEN ? AND ?
+              GROUP BY scan.scanTime;`
+
+    rows, err := s.DB.Query(query, scannerId, startDate, endDate)
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+
+    var results []scanDeviceCount
+
+    // Iterate through the result set
+    for rows.Next() {
+        var scanTime string
+        var numDevices int
+
+        // Scan values from the result set into variables
+        if err := rows.Scan(&scanTime, &numDevices); err != nil {
+            return nil, err
+        }
+
+        res := scanDeviceCount{scanTime, numDevices}
+        results = append(results, res)
+    }
+
+    // Check for errors from iterating over rows
+    if err := rows.Err(); err != nil {
+        return nil, err
+    }
+
+    // Calculate moving average
+    windowSize := 5
+    if len(results) >= windowSize {
+        for i := windowSize - 1; i < len(results); i++ {
+            sum := 0
+            for j := i - (windowSize - 1); j <= i; j++ {
+                sum += results[j].Count
+            }
+            results[i].Count = sum / windowSize
+        }
+    }
+
+    return &results, nil
 }

@@ -100,8 +100,8 @@ func (app *application) countScanDevices(w http.ResponseWriter, r *http.Request)
 	startDate := r.URL.Query().Get("start_date")
 	endDate := r.URL.Query().Get("end_date")
 
-	startDate = "2023-12-01 00:00:00" //TODO: REMOVE THIS
-	endDate = "2023-12-31 23:59:59"
+	startDate = "2023-12-12 00:00:00" //TODO: REMOVE THIS
+	endDate = "2023-12-12 23:59:59"
 
 	if startDate == "" || endDate == "" {
 		app.errorResponse(w, r, http.StatusBadRequest, "Invalid date range")
@@ -122,7 +122,7 @@ func (app *application) countScanDevices(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	res, err := app.models.Scan.CountScanDevices(scannerId, startDate, endDate)
+	res, err := app.models.Scan.CountScanDevicesMovingAVG(scannerId, startDate, endDate)
 
 	if err != nil {
 		app.logger.Error(err)

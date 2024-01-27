@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"strconv"
 
 	"lucamarchiori.bluetoothAffluence/server/internal/data"
 )
@@ -97,14 +98,35 @@ func (app *application) store(w http.ResponseWriter, r *http.Request) {
 func (app *application) countScanDevices(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	res, err := app.models.Scan.CountScanDevices(1)
+	startDate := r.URL.Query().Get("start_date")
+	endDate := r.URL.Query().Get("end_date")
+
+	if startDate == "" || endDate == "" {
+		app.errorResponse(w, r, http.StatusBadRequest, "Invalid date range")
+		return
+	}
+
+	// Get the scanner id from the request
+	scannerId, err := strconv.Atoi(r.URL.Query().Get("scanner_id"))
 
 	if err != nil {
 		app.logger.Error(err)
 		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
 	}
 
-	rp := customResp{Message: "Scanners retrived", Data: map[string]interface{}{"count": res}, Status: 200}
+	if scannerId == 0 {
+		app.errorResponse(w, r, http.StatusBadRequest, "Invalid scanner id")
+		return
+	}
+
+	res, err := app.models.Scan.CountScanDevices(scannerId, startDate, endDate)
+
+	if err != nil {
+		app.logger.Error(err)
+		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
+	}
+
+	rp := customResp{Message: "Scanners retrived", Data: map[string]interface{}{"count": res, "scanner_id": scannerId, "start_date": startDate, "end_date": endDate}, Status: 200}
 
 	err = app.writeJSON(w, http.StatusOK, rp, nil)
 	if err != nil {
@@ -122,15 +144,6 @@ func (app *application) indexScanner(w http.ResponseWriter, r *http.Request) {
 		app.logger.Error(err)
 		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
 	}
-
-	*res = append(*res, data.Scanner{Id: 0, Address: "00:00:00:00:00:00", Name: "All", Alias: "All"})
-	*res = append(*res, data.Scanner{Id: 0, Address: "00:00:00:00:00:00", Name: "All", Alias: "All"})
-	*res = append(*res, data.Scanner{Id: 0, Address: "00:00:00:00:00:00", Name: "All", Alias: "All"})
-	*res = append(*res, data.Scanner{Id: 0, Address: "00:00:00:00:00:00", Name: "All", Alias: "All"})
-	*res = append(*res, data.Scanner{Id: 0, Address: "00:00:00:00:00:00", Name: "All", Alias: "All"})
-	*res = append(*res, data.Scanner{Id: 0, Address: "00:00:00:00:00:00", Name: "All", Alias: "All"})
-	*res = append(*res, data.Scanner{Id: 0, Address: "00:00:00:00:00:00", Name: "All", Alias: "All"})
-	*res = append(*res, data.Scanner{Id: 0, Address: "00:00:00:00:00:00", Name: "All", Alias: "All"})
 
 	rp := customResp{Message: "Scanners retrived", Data: map[string]interface{}{"scanners": res}, Status: 200}
 

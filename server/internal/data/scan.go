@@ -38,15 +38,15 @@ func (s ScanModel) Insert(scan *Scan) (sql.Result, error) {
 	return rst, nil
 }
 
-func (s ScanModel) CountScanDevices(scannerId int) (*[]scanDeviceCount, error) {
+func (s ScanModel) CountScanDevices(scannerId int, startDate string, endDate string) (*[]scanDeviceCount, error) {
 
-	// TODO: Filter by scanner ID and date range
 	query := `SELECT scan.scanTime, COUNT(devices.id) AS numDevices FROM scan
 	LEFT JOIN devices ON scan.id = devices.scanID
 	WHERE scan.scannerID = ?
+	AND scan.scanTime BETWEEN ? AND ?
 	GROUP BY scan.scanTime;`
 
-	rows, err := s.DB.Query(query, scannerId)
+	rows, err := s.DB.Query(query, scannerId, startDate, endDate)
 
 	if err != nil {
 		return nil, err

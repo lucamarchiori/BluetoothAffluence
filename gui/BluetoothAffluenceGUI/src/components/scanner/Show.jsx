@@ -1,11 +1,25 @@
-
-
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import apiClient from "@/services/api";
 import useApiResponse from "@/hooks/useApiResponse";
 import { toast } from "react-toastify";
+import React from "react";
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
+import { Line } from "react-chartjs-2";
 
-const Show = ({scannerId}) => {
+export const options = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: "top",
+    },
+    title: {
+      display: true,
+      text: "Chart.js Line Chart",
+    },
+  },
+};
+
+const Show = ({ scannerId }) => {
   const [loading, setLoading] = useState(false);
   const handleFetchResponse = useApiResponse();
   const [data, setData] = useState([]);
@@ -14,7 +28,7 @@ const Show = ({scannerId}) => {
     const controller = new AbortController();
 
     const fetchApi = () => {
-      return apiClient.get("/scanner/show", {
+      return apiClient.get("/scanner/count-scan-devices", {
         signal: controller.signal,
       });
     };
@@ -23,7 +37,36 @@ const Show = ({scannerId}) => {
       setLoading(true);
       try {
         const [lastResponse] = await Promise.all([fetchApi()]);
-        setScanners(lastResponse.data.data.scanners);
+        setData(lastResponse.data.data.count);
+
+        // Cleanup previous chart instance
+        if (chartInstanceRef.current) {
+          chartInstanceRef.current.destroy();
+        }
+
+        if (chartCanvasRef.current) {
+
+          const scanTimes = data.map(entry => entry.scanTime);
+          const counts = data.map(entry => entry.count);
+
+          console.log(scanTimes)
+
+          chartInstanceRef.current = new ChartJS(chartCanvasRef.current, {
+            type: "line",
+            labels: scanTimes,
+            data: {
+              datasets: [
+                {
+                  label: "Dataset 1",
+                  data: counts,
+                  borderColor: "rgb(255, 99, 132)",
+                  backgroundColor: "rgba(255, 99, 132, 0.5)",
+                },
+              ],
+            },
+            options: options,
+          });
+        }
       } catch (error) {
         if (!controller.signal.aborted) {
           console.log("Error");
@@ -39,11 +82,16 @@ const Show = ({scannerId}) => {
 
     fetchData();
 
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+    }
+
   }, [apiClient, handleFetchResponse]);
 
-
-  return loading ? "loading ..." : "ciao"
+  const chartCanvasRef = useRef(null);
+  const chartInstanceRef = useRef(null);
+  console.log(data)
+  return loading ? "loading ..." : <canvas ref={chartCanvasRef} />;
 };
 
 export default Show;

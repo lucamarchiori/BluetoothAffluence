@@ -11,7 +11,7 @@ func TestPostScanResults(t *testing.T) {
 	s := Scan{Scanner: scan, Devices: devs}
 
 	b := postScanResults(s)
-	if !b {
+	if b != nil {
 		log.Info("Error")
 	}
 }

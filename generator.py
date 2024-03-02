@@ -42,20 +42,20 @@ def scan(d):
     # If datetime is between 19:00 and 08:00 generate a random number of devices between 0 and 3
     if(d.hour >= 19 or d.hour <= 8):
         min = 0 
-        max = 3
+        max = 0
 
     # If datetime is between 18:00 and 19:00 or datetime is between 8:00 and 9:00 generate a random number of devices between 1 and 5
-    elif((d.hour >= 18 and d.hour < 19) or (d.hour >= 8 and d.hour < 9)):
+    elif((d.hour >= 18 and d.hour <= 19) or (d.hour >= 8 and d.hour <= 9)):
         min = 1
-        max = 5
+        max = 3
     
     # If datetime is between 9:00 and 11:00 or datetime is between 14:00 and 18:00 generate a random number of devices between 8 and 15
-    elif((d.hour >= 9 and d.hour < 11) or (d.hour >= 14 and d.hour < 18)):
-        min = 8
+    elif((d.hour >= 9 and d.hour <= 12) or (d.hour >= 14 and d.hour <= 18)):
+        min = 5
         max = 15
         # If datetime is between 12:00 and 14:00 generate a random number of devices between 8 and 10
-    elif(d.hour >= 12 and d.hour < 14):
-        min = 8
+    elif(d.hour >= 12 and d.hour <= 14):
+        min = 3
         max = 10
 
     for i in range(random.randint(min, max)):
@@ -71,7 +71,7 @@ def scan(d):
             "scanId": scanId
         }
         devices.append(device)
-        print(device)
+        #print(device)
 
     # Insert devices into database
     for device in devices:
@@ -97,11 +97,12 @@ for i in range(100):
     macs.append(mac)
 
 
-dstart = datetime.datetime(2023,12,12,0,0,0,0)
-dend = datetime.datetime(2023,12,20,0,0,0,0)
+dstart = datetime.datetime(2023,12,12,8,0,0,0)
+dend = datetime.datetime(2023,12,14,20,0,0,0)
 
 # Run scan every 5 minutes between start and end
 while(dstart < dend):
+    print(dstart)
     scan(dstart)
     dstart += datetime.timedelta(minutes=5)
 

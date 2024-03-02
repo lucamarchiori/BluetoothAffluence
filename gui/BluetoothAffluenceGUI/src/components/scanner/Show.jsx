@@ -3,10 +3,7 @@ import apiClient from "@/services/api";
 import useApiResponse from "@/hooks/useApiResponse";
 import { toast } from "react-toastify";
 import React from "react";
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
-import { Line } from "react-chartjs-2";
-import PlotDevices from "../charts/PlotDevices";
-import 'chartjs-adapter-moment';
+import PlotDevicesV2 from "../charts/PlotDevicesV2";
 
 export const options = {
   responsive: true,
@@ -39,7 +36,7 @@ const Show = ({ scannerId }) => {
       setLoading(true);
       try {
         const [lastResponse] = await Promise.all([fetchApi()]);
-        setData(lastResponse.data.data.count);
+        setData(lastResponse.data);
       } catch (error) {
         if (!controller.signal.aborted) {
           console.log("Error");
@@ -61,10 +58,15 @@ const Show = ({ scannerId }) => {
 
   }, [apiClient, handleFetchResponse]);
 
-  const chartCanvasRef = useRef(null);
-  const chartInstanceRef = useRef(null);
   console.log(data)
-  return loading ? "loading ..." : <PlotDevices chartData={data} /> ;
+  return loading ? "loading ..." : (
+    <>
+      {(data && data.data && data.data.count.count) ? <PlotDevicesV2 chartData={data.data.count.count} ts={true} title={"Device count"} /> : ""}
+      {(data && data.data && data.data.countMovingAvg.count) ? <PlotDevicesV2 chartData={data.data.countMovingAvg.count} ts={true} title={"Device count (moving AVG)"} /> : ""}
+      {(data && data.data && data.data.timeAvg.count) ? <PlotDevicesV2 chartData={data.data.timeAvg.count} title={"Device count (time AVG)"} /> : ""}
+    
+    </>
+  );
 };
 
 export default Show;

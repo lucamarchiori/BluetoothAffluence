@@ -58,7 +58,7 @@
 \section{Introduction}
 Understanding occupancy levels in buildings and rooms has become increasingly valuable in various contexts. One significant application is assessing the availability of seating in libraries that do not have booking systems in place. By knowing the number of people currently present in the library, individuals have a way of knowing the probability of finding an open space to study or work. 
 
-Monitoring occupancy levels is crucial for effective workforce management: for businesses with multiple stores or offices, having real-time data on the number of people in each location allows management to allocate the appropriate amount of personnel accordingly. This ensures that staffing levels match customer demand or operational requirements, improving productivity and customer service.
+But monitoring occupancy levels can also be crucial for effective workforce management: for businesses with multiple stores or offices, having real-time data on the number of people in each location allows management to allocate the appropriate amount of personnel accordingly. This ensures that staffing levels match customer demand or operational requirements, improving productivity and customer service.
 
 In the event of a pandemic or other health-related concerns, understanding occupancy levels is critical for enforcing safety measures and organizing access to various places. By monitoring the number of individuals in a building or room, establishments can maintain social distancing protocols, manage crowd control, and implement measures to prevent overcrowding or potential outbreaks. Finally, in case of an emergency, it can be useful to get to know the amount of people in buildings to organize the rescue accordingly.
 
@@ -68,7 +68,6 @@ One approach could be leveraging the diffusion of Bluetooth technology in today'
 
 This project aims to develop a system that utilizes Bluetooth technology to display the approximate number of devices in a room over a certain period of time. The system would conduct continuous Bluetooth scans, tally the number of active devices, and present this data to provide insights into the occupancy patterns. By implementing such a system, organizations and individuals can have a better understanding of real-time occupancy levels, enabling them to make informed decisions about resource allocation, crowd management, and safety measures.
 
-\newpage
 \section{System architecture}
 The system architecture of the project is divided into two main units: the scanner devices and the server. The server itself is divided into a backend and a frontend applications.
 
@@ -78,18 +77,16 @@ The backend of the server functions as a web server. It receives the requests fr
 
 On the other hand, the server frontend serves as an interface between the user and the entire system. It provides webpages that can be accessed by users to interact with the system. The frontend can also trigger API requests to the backend server, requesting specific data. This data is then organized and presented to the user in a graphical view, enhancing the user experience.
 
-Overall, this system architecture ensures that the scanner devices can operate autonomously, collecting data and sending it to the central server. The server backend handles data processing, storage, and retrieval, while the frontend enables user interaction and presentation of the collected data in a user-friendly manner. The following scheme summarize the architecture and the data flow.
+This system architecture ensures that the scanner devices can operate autonomously, collecting data and sending it to the central server. The server backend handles data processing, storage, and retrieval, while the frontend enables user interaction and presentation of the collected data in a user-friendly manner. The following scheme (\ref{fig:system-architecture}) summarize the architecture and the data flow.
 
 \begin{figure}
     \centering
     \includegraphics[width=1\linewidth]{images/WNMA-ProjectScheme.jpg}
     \caption{Project architecture}
-    \label{fig:enter-label}
+    \label{fig:system-architecture}
 \end{figure}
 
 
-
-\newpage
 \section{Technologies}
 \subsection{Hardware devices}
 To implement the proposed system for tracking occupancy using Bluetooth scans, single-board computers like Raspberry Pi \cite{RPI} and Arduino \cite{arduino} are suitable choices. 
@@ -103,9 +100,9 @@ For this project due to board availability, a Raspberry Pi 3B+ has been used. Ho
 \subsection{Bluetooth}
 Bluetooth is a wireless communication technology that allows devices to exchange data and connect with each other over short distances. It uses radio waves in the 2.4 GHz frequency range to establish a secure and low-power connection between devices.
 
-Even though Bluetooth enables the sharing of data, in this project it is only used the scanning capabilities of this technology. When the scanner starts the discovery routine it sends out inquiry messages to discover other Bluetooth devices in its vicinity. These messages are broadcasted using 2.4 GHz. Bluetooth devices that receive the inquiry message can respond with their information, including their unique identifier called the Bluetooth device address or MAC address. The scanning device can also measure the Received Signal Strength Indication (RSSI) of the responses. RSSI provides an estimate of the signal strength between the scanning device and the responding devices. This information can be used to estimate the proximity or distance between devices, or in this project can be used to exclude devices outside the room (or building). 
+Even though Bluetooth enables the sharing of data, in this project it is only used the scanning capabilities of this technology. When the scanner starts the discovery routine it sends out inquiry messages to discover other Bluetooth devices in its range. Bluetooth devices that receive the scan request can respond with their information, including their unique identifier known as MAC address. The scanning device can also measure the Received Signal Strength Indication (RSSI) of the responses that provides an estimate of the signal strength between the scanning device and the responding devices. This information can be used to estimate the proximity or distance between devices, or in this project can be used to exclude devices outside the room (or building). 
 
-Bluetooth Low Energy (BLE) is a subset of Bluetooth designed for low-power applications. The main differences between Bluetooth and BLE are power consumption, data transfer rates, range, and application focus. Bluetooth consumes more power, offers higher data transfer rates, has a longer range, and is suitable for continuous data streaming. BLE is optimized for low power consumption, has lower data transfer rates, has a shorter range, and is suitable for intermittent communication in devices with limited power resources. Both Bluetooth and BLE can coexist and support interoperability between devices.
+Bluetooth Low Energy (BLE) is a subset of Bluetooth designed for low-power applications. The main differences between Bluetooth and BLE are power consumption, data transfer rates, range, and application focus. Standard Bluetooth consumes more power, offers higher data transfer rates, has a longer range, and is suitable for continuous data streaming. BLE is optimized for low power consumption, has lower data transfer rates, has a shorter range, and is suitable for communication in devices with limited power resources. Both Bluetooth and BLE can coexist and support interoperability between devices.
 
 This projects, using the go-bluetooth library, enables the scanning of both Bluetooth and Bluetooth Low Energy devices, allowing for scanning not only smartphones and computer but also smalls devices such as earphones, smart pencils, peripherals and watches.
 
@@ -128,18 +125,13 @@ One of the key advantages of using React is its ability to create single-page ap
 
 In this project, the frontend has been developed using React. By leveraging React's component-based architecture, it was possible to create reusable UI components that can be easily composed to build more complex user interfaces. This results in cleaner and more maintainable code and the possibility to easily expand the project with more features.
 
-To implement the data visualization pages, the Chart.js library \cite{chartjs} has been used. This library provides powerful charting and graphing functionalities, allowing the presentation of data in a visually appealing and informative manner.
+To implement the data visualization pages, the Apex Charts library \cite{apexcharts} has been used. This library provides powerful charting and graphing functionalities, allowing the presentation of data in a visually appealing and informative manner.
 
-For handling API calls to the backend, the project utilizes the Axios library \cite{axios}. Axios simplifies the process of making HTTP requests and handling responses, providing a convenient and efficient way to interact with the backend server.
+For handling API calls to the backend, the project uses the Axios library \cite{axios}. Axios simplifies the process of making HTTP requests and handling responses, providing a convenient and efficient way to interact with the backend server.
 
 \subsection{Database}
-The server implements SQLite \cite{sqlite} as its database system. SQLite belongs to the family of embedded databases, which are database management systems tightly integrated with an application software, avoiding the need for external servers. SQLite is widely deployed and used by top web browsers, operating systems, mobile phones, and other embedded systems.
-
-The decision to use SQLite in this project was based on its embedded nature, as it enables faster development and deployment. SQLite stores the database in files that can be easily managed and deployed, eliminating the need for complex server setups and heavier (DBMS). This simplicity and portability make SQLite an ideal choice for this prototype.
-
-However, it's worth noting that SQLite can be easily replaced with more powerful DBMS options such as MySQL or PostgreSQL, depending on the specific requirements and scalability needs of the project. These DBMSs offer additional features and can handle larger, more complex databases if necessary. For the purposes of this project, SQLite provides an efficient and practical solution.
-
-\newpage
+The server implements SQLite \cite{sqlite} as its database system. SQLite belongs to the family of embedded databases, which are database management systems tightly integrated with an application software, avoiding the need for external servers. SQLite stores the database in files that can be easily managed and deployed, eliminating the need for complex server setups and heavier (DBMS). 
+However, if this project will ever be deployed on a production enviroment, SQLite can be easily replaced with more powerful DBMS options such as MySQL or PostgreSQL, depending on the specific requirements and scalability needs of the project. These DBMSs offer additional features and can handle larger, more complex databases if necessary.
 
 \section{Development}
 \subsection{Scanner}
@@ -214,13 +206,112 @@ This script can be set to run automatically by configure an utility such as Cron
 By increasing the frequency of the scan, it is possible to increase the granularity of the data store. Note that it can never be less than the scanning timeout set in the script.
 
 \subsection{Server back-end}
+The server backend is used to accomplish two tasks: storing the results sent by the scanner regarding the devices reached by a scan, storing them in the database, and providing the data to the client frontend upon request.
+
+For the first part, an HTTP handler is defined to store the scanning information in a structure like the following:
+
+\begin{lstlisting}[language=Go]
+var input struct {
+	Devices []struct {
+		Address string `json:"address"`
+		Name    string `json:"name"`
+		Alias   string `json:"alias"`
+		TxPower int16  `json:"txPower"`
+		RSSI    int16  `json:"rssi"`
+	}
+	Scanner struct {
+		Address string `json:"address"`
+		Name    string `json:"name"`
+		Alias   string `json:"alias"`
+	}
+	ScanTime string `json:"scanTime"`
+}
+\end{lstlisting}
+
+By leveraging Go's tag feature, it is possible to automatically read the JSON in the HTTP body request and populate the input structure.
+
+After that, the data is stored in the database with the following schema:(\ref{fig:database-schema}):
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{images/WNMA_DB.drawio}
+    \caption{Database schema}
+    \label{fig:database-schema}
+\end{figure}
+
+The list of authorized scanner devices is stored in the database. When the scanner sends a new store request to the server, it is checked if it is among the authorized scanners. If it is, a new scan is stored to record the scanner ID and the time of the scan. For each scan, the information of the scanned devices is stored and associated with the scan. Alternatively, a more privacy-oriented and efficient solution would involve avoiding sending the list of scanned devices and only sending the count attribute.
+
+To retrieve data from the server, a function that handles GET requests is defined. This function reads the start date, end date (the dates from and to which to retrieve the scanned devices), and the scanner ID. It is indeed possible to have multiple scanners and retrieve the data only for a certain scanner deployed in a specific room and a specific time range.
+
+\begin{lstlisting}[language=Go]
+func (app *application) countScanDevices(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	startDate := r.URL.Query().Get("start_date")
+	endDate := r.URL.Query().Get("end_date")
+
+
+	if startDate == "" || endDate == "" {
+		app.errorResponse(w, r, http.StatusBadRequest, "Invalid date range")
+		return
+	}
+
+	// Get the scanner id from the request
+	scannerId, err := strconv.Atoi(r.URL.Query().Get("scanner_id"))
+	if err != nil {
+		app.logger.Error(err)
+		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
+	}
+
+	if scannerId == 0 {
+		app.errorResponse(w, r, http.StatusBadRequest, "Invalid scanner id")
+		return
+	}
+	
+	[...]
+	
+\end{lstlisting}
+
+The front-end will display a chart with the occupancy rate across the specified interval. Hence, after retrieving the data, the function will calculate, for every data point (every 5 minutes or depending on the scanner timeout), the total number of devices, the moving average of the devices, and the average number of devices present in the room for each time of the day.
+
+The first piece of information that we can plot is the number of devices scanned for each time of the day. This can provide us with an idea of the real occupancy of the room, although it may show non-uniform numbers of devices due to devices being constantly included and excluded from the scan due to interferences and Bluetooth range. The following SQL query can retrieve the number of scanned devices for each time of the day:
+
+\begin{lstlisting}[language=SQL]
+	SELECT scan.scanTime, COUNT(devices.id) AS numDevices FROM scan
+	LEFT JOIN devices ON scan.id = devices.scanID
+	WHERE scan.scannerID = ?
+	AND scan.scanTime BETWEEN ? AND ?
+	GROUP BY scan.scanTime;
+\end{lstlisting}
+
+Moving average is a technique used in time series analysis that is particularly useful for smoothing out fluctuations and identifying trends in data. It involves calculating the average of a set of data points within a window or interval. This window moves along the data, incorporating new points and dropping old ones to create a series of average values.
+
+After retrieving the data using the query above, it is possible to calculate the simple moving average as follows:
+
+\begin{equation}
+	{\displaystyle {\begin{aligned}{\textit {SMA}}_{k}&={\frac {p_{n-k+1}+p_{n-k+2}+\cdots +p_{n}}{k}}\\&={\frac {1}{k}}\sum _{i=n-k+1}^{n}p_{i}\end{aligned}}}
+\end{equation}
+
+
+\begin{lstlisting}[language=Go]
+windowSize := 5
+if len(results) >= windowSize {
+	for i := windowSize - 1; i < len(results); i++ {
+		sum := 0
+		for j := i - (windowSize - 1); j <= i; j++ {
+			sum += results[j].Count
+			}
+		results[i].Count = sum / windowSize
+	}
+}
+	
+\end{lstlisting}
+
 
 
 \subsection{Server front-end}
 \newpage
 
-\section{Tests}
-\newpage
 
 \section{Results}
 
@@ -249,8 +340,8 @@ Project's GitHub repository - \href{https://github.com/lucamarchiori/BluetoothAf
 \bibitem{react}
 \href{https://react.dev/}{React framework}
 
-\bibitem{chartjs}
-\href{https://www.chartjs.org/}{React JS charting library}
+\bibitem{apexcharts}
+\href{https://apexcharts.com/}{Apex Chart JS charting library}
 
 \bibitem{axios}
 \href{https://axios-http.com/}{Axios - Promise based HTTP client}

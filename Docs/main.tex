@@ -33,7 +33,9 @@
     showspaces=false,                
     showstringspaces=false,
     showtabs=false,                  
-    tabsize=2
+    tabsize=2,
+	aboveskip=10pt, % set the space above the lstlisting block
+	belowskip=10pt, % set the space below the lstlisting block
 }
 \lstset{style=mystyle}
 \begin{document}
@@ -304,16 +306,96 @@ if len(results) >= windowSize {
 		results[i].Count = sum / windowSize
 	}
 }
-	
 \end{lstlisting}
 
+Another interesting metric that can be calculated on the whole dataset, without specifying a date interval, is the Average value per timestamp, calculated on a 5-minute interval.
 
+This metric allows us to estimate, on average, how many devices are in the room for each specific 5-minute interval (or any other interval depending on the scan rate).
 
-\subsection{Server front-end}
-\newpage
+To calculate this metric, we can write a SQL query similar to the one previously seen. This time, group the data by the 5-minute interval and count all devices present in that interval each day. Next, determine the exact size of the time interval (the number of days between the first and last datapoint) and divide the total device count by the number of days to obtain the mean value.
 
+\begin{lstlisting}[language=SQL]
+	SELECT strftime('%H:%M', scan.scanTime) AS minuteOfDay, COUNT(devices.id) AS averageValue
+	FROM scan
+	LEFT JOIN devices ON scan.id = devices.scanID
+	WHERE scan.scannerID = ? AND scan.scanTime BETWEEN ? AND ?
+	GROUP BY minuteOfDay;
+\end{lstlisting}
+
+\begin{lstlisting}[language=Go]
+for rows.Next() {
+	var scanTime string
+	var numDevices int
+
+	[...]
+	res := scanDeviceAvg{scanTime, toFixed(float64(numDevices)/days, 2)}
+	results = append(results, res)
+}
+\end{lstlisting}
+
+The server is now ready to respond to fetch requests from the frontend. It will reply with the three metrics defined above so that the frontend can display them graphically. The full commented code, including the functions above, can be found in the project directory.
 
 \section{Results}
+The system has been tested using a single Raspberry Pi over 3 days at a local library. Due to the high cost of setting up a remote server for testing purposes, everything was configured to run on the Raspberry Pi using the loopback address. The scanner script runs every 5 minutes via Linux's crontab utility, and the backend server is active on port 4000. Every 5 minutes, the scanner conducts a bluetooth scan for approximately 60 seconds and sends the results to the backend server, which then stores them in the database.
+
+By transferring the database and running the backend server on a PC alongside the frontend project, it is possible to analyze the recorded data and verify the overall functionality of the system.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/DeviceIndexScreenshot.png}
+    \caption{Web index}
+    \label{fig:web-index}
+\end{figure}
+
+The first page displays a list of scanners. In cases where multiple scanners are used (such as one for each building or room), this page allows users to view the list of scanners. By clicking on a specific scanner, users can access a page where the recorded data is visualized.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/DeviceShowScreenshot.png}
+    \caption{Device count page}
+    \label{fig:web-show}
+\end{figure}
+
+The first chart displays the simple device count. As mentioned in the backend description, the data points may show spikes caused by devices continuously entering and exiting the scan set due to Bluetooth reachability and interferences. By applying a moving average with a 25-minute window, the results can be smoothed out, enabling the detection of patterns in the data.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/c1wdhap3.png}
+    \caption{Device count chart}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/tp0w3w99f.png}
+    \caption{Device count with moving average}
+\end{figure}
+
+Here it is possible to see that the number of users increases from the opening time of the library (8.00) to around noon where many students probably leave the library for lunch. Here we can se a little decrease in the device count. In the afternoon there is again a small increment in the device count that finally starts to slowly go down to zero within the closing times of the library.
+
+Here, it is possible to see that the number of users increases from the library's opening time (8:00) until around noon, when many students likely leave for lunch. This is reflected in a slight decrease in the device count. In the afternoon, there is a small increase in the device count, which slowly count down to zero by the library's closing time (18.00).
+
+This data refers to a single day but the other days have more or less the same pattern. This can be seen using the average device count per timestamp, calculated on a 5-minute interval.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/reyw2zjfg.png}
+    \caption{Average device count}
+\end{figure}
+
+\subsection{Conclusions}
+The results appear to meet the initial requirements for understanding the occupancy rate patterns of people in the buildings. However, there are some considerations to take into account.
+
+In regard to the test results, conducting tests on the system for only three days in a small library is not sufficient to gain a clear understanding of its effectiveness. The limited number of people entering and exiting the library leads to significant variations in the device count, highlighting the need for a longer testing period to validate the results. Additionally, inferring precise user numbers is challenging as it is impossible to determine how many Bluetooth devices individuals carry or if they have their Bluetooth enabled. The results can also vary greatly based on the type of environment being monitored. In settings like universities, people typically carry smartphones and computers, while some may also have smartwatches, earphones, and other Bluetooth-enabled devices leading to a high number of bluetooth device carried by each person. On the other hand, locations such as supermarkets or public offices may have many individuals without any Bluetooth devices. Moreover, in environments like companies or hospitals, there may be company-owned devices operating under Bluetooth that do not necessarily indicate the presence of individuals. This could result in a higher number of connected devices even during off-hours or when the building is unoccupied.
+
+It would also be important to consider current privacy regulations as this software logs each Bluetooth device present in a building. Associating a device's MAC address with an individual could potentially track their movements within rooms and buildings. To avoid this concern, the scanner could transmit only the total count of scanned devices to the software for each scan, instead of providing information on each individual device.
+
+Therefore, there is a need for further testing of this system over an extended period and in different locations to compare the results and assess the system's effectiveness. It would also be beneficial to conduct surveys and studies to determine how many active Bluetooth devices individuals typically carry and how this may vary depending on factors such as location, age, and context.
+
+From a technical perspective, the software architecture is functioning well and can be scaled up to accommodate more scanners for monitoring multiple rooms and buildings. The decoupling of components (scanner, frontend server, backend server) is a solid starting point for scalable software, allowing for the further development and expansion of each component to include additional features.
+
+
+
+
 
 \newpage
 \begin{thebibliography}{9}

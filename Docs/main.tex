@@ -82,7 +82,7 @@ On the other hand, the server frontend serves as an interface between the user a
 
 This system architecture ensures that the scanner devices can operate autonomously, collecting data and sending it to the central server. The server backend handles data processing, storage, and retrieval, while the frontend enables user interaction and presentation of the collected data in a user-friendly manner. The following scheme (\ref{fig:system-architecture}) summarize the architecture and the data flow.
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{images/WNMA-ProjectScheme.jpg}
     \caption{Project architecture}
@@ -102,9 +102,9 @@ For this project due to board availability, a Raspberry Pi 3B+ has been used. Ho
 
 \subsection{Bluetooth}
 Bluetooth is a wireless communication technology that allows devices to exchange data and connect with each other over short distances. It uses radio waves in the 2.4 GHz frequency range to establish a secure and low-power connection between devices.
-
-Even though Bluetooth enables the sharing of data, in this project it is only used the scanning capabilities of this technology. When the scanner starts the discovery routine it sends out inquiry messages to discover other Bluetooth devices in its range. Bluetooth devices that receive the scan request can respond with their information, including their unique identifier known as MAC address. The scanning device can also measure the Received Signal Strength Indication (RSSI) of the responses that provides an estimate of the signal strength between the scanning device and the responding devices. This information can be used to estimate the proximity or distance between devices, or in this project can be used to exclude devices outside the room (or building). 
-
+\\
+Even though Bluetooth enables the sharing of data and it should be used as a cable replacement, in this project it is only used the scanning capabilities of this technology. The Raspberry Pi initiates a new inquiry procedure and sends a request message to all the Bluetooth devices within its range. All the client devices, upon receiving the request, respond with an inquiry response stating all their device information. Normally, the procedure would continue with a pairing request and a service discovery. However, for this project, the goal is simply to know the devices around the scanner. Each Bluetooth returns a unique 48-bit address, commonly abbreviated as BD_ADDR. This is typically represented as a 12-digit hexadecimal value. The most significant half (24 bits) of the address is an organization unique identifier that indicates the manufacturer. The remaining 24 bits provide a unique part of the address. The scanning device can also measure the Received Signal Strength Indication (RSSI) of the responses that provides an estimate of the signal strength between the scanning device and the responding devices. This information can be used to estimate the proximity or distance between devices, or in this project can be used to exclude devices outside the room (or building). 
+\\
 Bluetooth Low Energy (BLE) is a subset of Bluetooth designed for low-power applications. The main differences between Bluetooth and BLE are power consumption, data transfer rates, range, and application focus. Standard Bluetooth consumes more power, offers higher data transfer rates, has a longer range, and is suitable for continuous data streaming. BLE is optimized for low power consumption, has lower data transfer rates, has a shorter range, and is suitable for communication in devices with limited power resources. Both Bluetooth and BLE can coexist and support interoperability between devices.
 
 This projects, using the go-bluetooth library, enables the scanning of both Bluetooth and Bluetooth Low Energy devices, allowing for scanning not only smartphones and computer but also smalls devices such as earphones, smart pencils, peripherals and watches.
@@ -336,8 +336,24 @@ for rows.Next() {
 
 The server is now ready to respond to fetch requests from the frontend. It will reply with the three metrics defined above so that the frontend can display them graphically. The full commented code, including the functions above, can be found in the project directory.
 
-\section{Results}
-The system has been tested using a single Raspberry Pi over 3 days at a local library. Due to the high cost of setting up a remote server for testing purposes, everything was configured to run on the Raspberry Pi using the loopback address. The scanner script runs every 5 minutes via Linux's crontab utility, and the backend server is active on port 4000. Every 5 minutes, the scanner conducts a bluetooth scan for approximately 60 seconds and sends the results to the backend server, which then stores them in the database.
+\section{Field-test and results}
+The system has been tested using a single Raspberry Pi over 3 days at a local library. Due to the high cost of setting up a remote server for testing purposes, everything was configured to run on the Raspberry Pi using the loopback address. The scanner script runs every 5 minutes via Linux's crontab utility, and the backend server is active on port 4000.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{images/RpiBiblioPhoto.jpg}
+    \caption{Field-test}
+    \label{fig:field-test}
+\end{figure}
+
+Every 5 minutes, the scanner conducts a bluetooth scan for approximately 60 seconds and sends the results to the backend server, which then stores them in the database.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{images/ScanningScreen.png}
+    \caption{Scanner script running}
+    \label{fig:script-running}
+\end{figure}
 
 By transferring the database and running the backend server on a PC alongside the frontend project, it is possible to analyze the recorded data and verify the overall functionality of the system.
 

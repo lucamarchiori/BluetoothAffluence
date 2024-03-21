@@ -1,0 +1,116 @@
+\documentclass{beamer}
+
+\usetheme{Padova}
+
+\title{WNMA Project}
+\subtitle{Real-time crowd information using Bluetooth: a full-stack solution}
+\author{Luca Marchiori}
+\date{25 Marzo 2025}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{Outline}
+	\tableofcontents
+\end{frame}
+
+
+\section{Introduction}
+
+\begin{frame}{Introduction}
+	\textbf{Project Idea:} is it possible to exploit Bluetooth to count how many people are there in a room / building and the occupancy trends?
+	\begin{itemize}
+		\item Seat availability in libraries (without reservation)\vspace{.5em}
+		\item Workforce management (effective deployment)\vspace{.5em}
+		\item Health-critical monitoring (pandemic)\vspace{.5em}
+	\end{itemize}
+
+	\textbf{Assumption:} BT is a very diffused technology and nowadays most people have a BT-enabled device (smartphone, smartwatch, etc.) with them. Often it is turned on beacause of low energy consumption.
+
+\end{frame}
+
+\section{Technology stack}
+
+\begin{frame}{Scanner}
+	The scanner is a device that periodically scans \footnotemark the environment for Bluetooth devices and sends the data to the server.
+	\vspace{1em}
+	Implemented in Go, can run both on Raspberry Pi and Arduino\footnotemark.
+	\begin{block}
+		{Features}
+		\begin{itemize}
+			\item Low energy consumption
+			\item Low cost hardware
+			\item Easy deployment
+		\end{itemize}
+	\end{block}
+
+	Thanks to linux's crontab, the scanner can be scheduled to run at specific times, e.g. every 5 minutes.
+
+	\footnotetext[1]{Use the go-bluetooth library and the Bluez DBus API}
+	\footnotetext[2]{Can be compiled for Arduino using TinyGo}
+\end{frame}
+\begin{frame}{Server}
+	The server includes both a backend and a frontend developed in a product-ready fashion.
+	\begin{block}
+		{Backend}
+		\begin{itemize}
+			\item Implemented in Go
+			\item RESTful API
+			\item Data storage: SQLite
+		\end{itemize}
+	\end{block}
+
+	\begin{block}
+		{Frontend}
+		\begin{itemize}
+			\item Implemented in React
+			\item Real-time data visualization
+		\end{itemize}
+	\end{block}
+
+\end{frame}
+
+\section{System Architecture}
+
+\begin{frame}{System Architecture}
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.7\textwidth]{images/WNMA-ProjectScheme.jpg}
+		\caption{System architecture}
+	\end{figure}
+\end{frame}
+
+\section{Field test}
+\begin{frame}{Field test}
+	The system has been tested in a real environment: a small local library.
+	\begin{itemize}
+		\item The scanner (Raspberry Pi) has been placed in a central position
+		\item To avoid hosting costs, the server has been deployed on the Raspberry loopback interface
+		\item Three days of data collection with few people in the library
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Field test}
+	\begin{columns}
+		% Column 1
+		\begin{column}{0.5\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=1\textwidth]{images/RpiBiblioPhoto.jpg}
+			\end{figure}
+		\end{column}
+		% Column 2    
+		\begin{column}{0.5\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=1\textwidth]{images/ScanningScreen.png}
+			\end{figure}
+		\end{column}
+	\end{columns}
+
+
+\end{frame}
+
+\end{document}

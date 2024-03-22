@@ -1,11 +1,36 @@
 \documentclass{beamer}
 
-\usetheme{Padova}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{lmodern}
+\usepackage{listings}
+% Use Unipd as theme, with options:
+% - pageofpages: define the separation symbol of the footer page of pages (e.g.: of, di, /, default: of)
+% - logo: position another logo near the Unipd logo in the title page (e.g. department logo), passing the second logo path as option 
+% Use the environment lastframe to add the endframe text
+%\usetheme[pageofpages=of, logo=dm_logo.png]{Unipd}
+\usetheme[pageofpages=of]{Unipd}
 
 \title{WNMA Project}
 \subtitle{Real-time crowd information using Bluetooth: a full-stack solution}
 \author{Luca Marchiori}
-\date{25 Marzo 2025}
+\date{25 Marzo 2024}
+
+\lstdefinestyle{mystyle}{
+    basicstyle=\ttfamily\tiny,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=1,
+	aboveskip=5pt, % set the space above the lstlisting block
+	belowskip=5pt, % set the space below the lstlisting block
+}
+\lstset{style=mystyle}
 
 
 \begin{document}
@@ -114,10 +139,57 @@
 
 \section{Results}
 \begin{frame}{Results}
-	Bla bla bla
-
+	\begin{figure}
+		\centering
+		\includegraphics[width=1\textwidth]{images/c1wdhap3.png}
+	\end{figure}
+	\begin{block}
+		{Simple device count}
+		\begin{itemize}
+			\item High variability in the number of devices detected
+			\item occupancy trend is hard to detect
+			\item Chart is day-based
+		\end{itemize}
+	\end{block}
 \end{frame}
 
+\begin{frame}{Results}
+	\begin{figure}
+		\centering
+		\includegraphics[width=1\textwidth]{images/tp0w3w99f.png}
+	\end{figure}
+	\begin{block}
+		{Moving average device count}
+		\begin{itemize}
+			\item Moving average with window of 25 minutes
+			\item Trend is more visible
+		\end{itemize}
+		\vspace{1.5em}
+		\small{
+			\begin{equation}
+				{\displaystyle {\begin{aligned}{\textit {SMA}}_{k}&={\frac {p_{n-k+1}+p_{n-k+2}+\cdots +p_{n}}{k}}&={\frac {1}{k}}\sum _{i=n-k+1}^{n}p_{i}\end{aligned}}}
+			\end{equation}
+		}
+	\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Results}
+	\begin{figure}
+		\centering
+		\includegraphics[width=1\textwidth]{images/reyw2zjfg.png}
+	\end{figure}
+	\begin{block}
+		{Average device count per time}
+		\begin{lstlisting}[language=SQL]
+			SELECT scan.scanTime, COUNT(devices.id) AS numDevices FROM scan
+			LEFT JOIN devices ON scan.id = devices.scanID
+			WHERE scan.scannerID = ?
+			AND scan.scanTime BETWEEN ? AND ?
+			GROUP BY scan.scanTime;
+		\end{lstlisting}
+	\end{block}
+\end{frame}
 
 \section{Additional considerations}
 \begin{frame}{Additional considerations}
@@ -151,6 +223,13 @@
 		Further test and better data analysis are needed to evaluate the system's effectiveness.
 	\end{exampleblock}
 
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=red_unipd}
+\begin{frame}{}
+	\begin{center}
+		\Huge{\textcolor{white}{Thank you for your attention!}}
+	\end{center}
 \end{frame}
 
 \end{document}

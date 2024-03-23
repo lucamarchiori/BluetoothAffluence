@@ -26,19 +26,19 @@
 %% Define the footer with author, presentation title and page of pages
 \defbeamertemplate*{footline}{pres theme}{%
     \ifnum\c@framenumber>1
-        % \leavevmode%
-        % \hbox{%
-        %     \begin{beamercolorbox}[wd=.3\paperwidth,ht=2.25ex,dp=1ex,center]{footercolor}%
-        %         \usebeamerfont{footer font}\insertshortauthor
-        %     \end{beamercolorbox}%
-        %     \begin{beamercolorbox}[wd=.4\paperwidth,ht=2.25ex,dp=1ex,center]{frametitle}%
-        %         \usebeamerfont{footer font}\insertshorttitle
-        %     \end{beamercolorbox}%
-        %     \begin{beamercolorbox}[wd=.3\paperwidth,ht=2.25ex,dp=1ex,center]{frametitle}%
-        %         \usebeamerfont{footer font}\insertframenumber{} \beamer@unipd@pageofpages{} \inserttotalframenumber
-        %     \end{beamercolorbox}%
-        % }%
-        % \vskip0cm%
+        \leavevmode%
+        \hbox{%
+            \begin{beamercolorbox}[wd=.3\paperwidth,ht=2.25ex,dp=1ex,center]{footercolor}%
+                \usebeamerfont{footer font}\insertshortauthor
+            \end{beamercolorbox}%
+            \begin{beamercolorbox}[wd=.4\paperwidth,ht=2.25ex,dp=1ex,center]{frametitle}%
+                \usebeamerfont{footer font}\insertshorttitle
+            \end{beamercolorbox}%
+            \begin{beamercolorbox}[wd=.3\paperwidth,ht=2.25ex,dp=1ex,center]{frametitle}%
+                \usebeamerfont{footer font}\insertframenumber{} \beamer@unipd@pageofpages{} \inserttotalframenumber
+            \end{beamercolorbox}%
+        }%
+        \vskip0cm%
     \fi
 }
 

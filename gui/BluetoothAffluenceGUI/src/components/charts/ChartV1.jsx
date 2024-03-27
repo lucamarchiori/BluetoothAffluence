@@ -62,6 +62,9 @@ export default function ChartV1({ height, title, categories, serie, loading, ts 
                 strokeDashArray: 4,
             },
             xaxis: xaxis,
+            yaxis: {
+                min: 0,
+            },
             stroke: {
                 curve: "smooth",
                 width: 2,

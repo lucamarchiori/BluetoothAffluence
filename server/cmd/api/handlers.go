@@ -65,9 +65,11 @@ func (app *application) store(w http.ResponseWriter, r *http.Request) {
 		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
 	}
 
+	formattedScanTime := input.ScanTime[:10] + " " + input.ScanTime[11:19]
+
 	// Handle SCAN info
 	s := &data.Scan{
-		ScanTime:  input.ScanTime,
+		ScanTime:  formattedScanTime,
 		ScannerId: (*sc).Id,
 	}
 
@@ -116,25 +118,32 @@ func (app *application) countScanDevices(w http.ResponseWriter, r *http.Request)
 	startDate := r.URL.Query().Get("start_date")
 	endDate := r.URL.Query().Get("end_date")
 
-	startDate = "2023-12-12 00:00:00" //TODO: HARDCODED DATES FOR DEMO PURPOSES
-	endDate = "2023-12-12 23:59:59"
-
-	if startDate == "" || endDate == "" {
-		app.errorResponse(w, r, http.StatusBadRequest, "Invalid date range")
-		return
-	}
-
-	// Get the scanner id from the request
-	//scannerId, err := strconv.Atoi(r.URL.Query().Get("scanner_id")) //TODO: HARDCODED SCANNER ID FOR DEMO PURPOSES
+	// //Get the scanner id from the request
+	// scannerId, err := strconv.Atoi(r.URL.Query().Get("scanner_id")) //TODO: HARDCODED SCANNER ID FOR DEMO PURPOSES
 	// if err != nil {
 	// 	app.logger.Error(err)
 	// 	app.errorResponse(w, r, http.StatusBadRequest, err.Error())
 	// }
 
-	scannerId := 1
+	scannerId := 2
+
+	if scannerId == 1 {
+		startDate = "2023-12-12 00:00:00" //TODO: HARDCODED DATES FOR DEMO PURPOSES
+		endDate = "2023-12-12 23:59:59"
+	}
+
+	if scannerId == 2 {
+		startDate = "2024-03-27 00:00:00" //TODO: HARDCODED DATES FOR DEMO PURPOSES
+		endDate = "2024-03-27 23:59:59"
+	}
 
 	if scannerId == 0 {
 		app.errorResponse(w, r, http.StatusBadRequest, "Invalid scanner id")
+		return
+	}
+
+	if startDate == "" || endDate == "" {
+		app.errorResponse(w, r, http.StatusBadRequest, "Invalid date range")
 		return
 	}
 
@@ -159,9 +168,6 @@ func (app *application) countScanDevices(w http.ResponseWriter, r *http.Request)
 	countData := map[string]interface{}{"count": res, "scanner_id": scannerId, "start_date": startDate, "end_date": endDate}
 
 	// --- Count Time AVG ---
-
-	startDate = "2023-12-01 00:00:00" //TODO: HARDCODED DATES FOR DEMO PURPOSES
-	endDate = "2023-12-31 23:59:59"
 	resAvg, err := app.models.Scan.CountScanDevicesTimeAvg(scannerId, startDate, endDate)
 
 	if err != nil {

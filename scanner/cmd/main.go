@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/muka/go-bluetooth/bluez/profile/adapter"
 	"github.com/sirupsen/logrus"
@@ -25,24 +26,30 @@ func init() {
 }
 
 func main() {
+	var aid string
+	var scan Scan
+	var err error
+	sleepDuration := time.Duration(300) * time.Second
 	log.Infof("Bluetooth affluence script started")
+	for {
+		aid = adapter.GetDefaultAdapterID()
+		log.Info("Starting scanner phase")
 
-	aid := adapter.GetDefaultAdapterID()
-	scan, err := Run(aid, 60)
-	//scan, err := RunMock()
+		scan, err = Run(aid, 60)
 
-	if err != nil {
-		log.Error(err)
-		os.Exit(1)
+		if err != nil {
+			log.Error(err)
+			os.Exit(1)
+		}
+
+		err = postScanResults(scan)
+		if err != nil {
+			log.Error("Error sending data to server")
+			os.Exit(1)
+		}
+		log.Info("Starting sleeping phase")
+		time.Sleep(sleepDuration)
 	}
-
-	err = postScanResults(scan)
-	if err != nil {
-		log.Error("Error sending data to server")
-		os.Exit(1)
-	}
-
-	os.Exit(0)
 }
 
 func postScanResults(scan Scan) error {

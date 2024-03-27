@@ -77,6 +77,7 @@ func (s ScanModel) CountScanDevices(scannerId int, startDate string, endDate str
 	LEFT JOIN devices ON scan.id = devices.scanID
 	WHERE scan.scannerID = ?
 	AND scan.scanTime BETWEEN ? AND ?
+	AND devices.rssi > -90
 	GROUP BY scan.scanTime;`
 
 	rows, err := s.DB.Query(query, scannerId, startDate, endDate)
@@ -116,6 +117,7 @@ func (s ScanModel) CountScanDevicesMovingAVG(scannerId int, startDate string, en
               LEFT JOIN devices ON scan.id = devices.scanID
               WHERE scan.scannerID = ?
               AND scan.scanTime BETWEEN ? AND ?
+			AND devices.rssi > -90
               GROUP BY scan.scanTime;`
 
 	rows, err := s.DB.Query(query, scannerId, startDate, endDate)
@@ -165,6 +167,8 @@ func (s ScanModel) CountScanDevicesTimeAvg(scannerId int, startDate string, endD
 	FROM scan
 	LEFT JOIN devices ON scan.id = devices.scanID
 	WHERE scan.scannerID = ? AND scan.scanTime BETWEEN ? AND ?
+	AND devices.rssi > -90
+
 	GROUP BY minuteOfDay;
 				`
 

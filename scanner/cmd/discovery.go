@@ -65,15 +65,26 @@ type Scan struct {
 	ScanTime string   `json:"scanTime"`
 }
 
-func ScannerProps(a adapter.Adapter1) Scanner {
-	var s Scanner = Scanner{Address: a.Properties.Address, Name: a.Properties.Name, Alias: a.Properties.Alias}
+func ScannerProps(a *adapter.Adapter1) Scanner {
+	var s Scanner
+	if a != nil && a.Properties != nil && a.Properties.Address != "" {
+		s.Address = a.Properties.Address
+	}
+	if a != nil && a.Properties != nil && a.Properties.Name != "" {
+		s.Name = a.Properties.Name
+	}
+	if a != nil && a.Properties != nil && a.Properties.Alias != "" {
+		s.Alias = a.Properties.Alias
+	}
 	return s
 }
 
-func PowerCycle(a adapter.Adapter1) {
+func PowerCycle(a *adapter.Adapter1) {
 	log.Infof("Running BT power cycle")
-	a.SetPowered(false)
-	a.SetPowered(true)
+	if a != nil {
+		a.SetPowered(false)
+		a.SetPowered(true)
+	}
 }
 
 /*
@@ -102,16 +113,16 @@ func Run(adapterID string, timer int) (Scan, error) {
 	var devices []Device
 
 	// Clean up connection on exit
-	defer api.Exit()
+	//defer api.Exit()
 
 	// Get the Bluetooth adapter by adapterID
 	a, err := adapter.GetAdapter(adapterID)
 
 	// Create a Scanner object from the adapter properties
-	var s Scanner = ScannerProps(*a)
+	var s Scanner = ScannerProps(a)
 
 	// Power cycle the adapter
-	PowerCycle(*a)
+	PowerCycle(a)
 
 	log.Infof("Scanning started on: %s - %s", s.Address, s.Alias)
 
